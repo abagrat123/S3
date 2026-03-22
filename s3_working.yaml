@@ -1,7 +1,12 @@
-AWSTemplateFormatVersion: 2019-09-09
-Resorces:
+# Description: Fixed CloudFormation template errors for S3 bucket deployment
+# Revision: 1
+# Date: 2026-03-22
+
+AWSTemplateFormatVersion: 2010-09-09
+
+Resources:
   S3Bucket:
-    Type: 'AWS:S3:Bucket'
+    Type: 'AWS::S3::Bucket'
     Properties:
       PublicAccessBlockConfiguration:
         BlockPublicAcls: false
@@ -13,12 +18,14 @@ Resorces:
         ErrorDocument: error.html
     DeletionPolicy: Retain
     UpdateReplacePolicy: Retain
-BucketPolicy:
-    #Type: 'AWS::S3::BucketPolicy'
+
+  BucketPolicy:
+    Type: 'AWS::S3::BucketPolicy'
     Properties:
+      Bucket: !Ref S3Bucket
       PolicyDocument:
         Id: MyPolicy
-        Version: 2012-10-17
+        Version: '2012-10-17'
         Statement:
           - Sid: PublicReadForGetBucketObjects
             Effect: Allow
@@ -28,14 +35,15 @@ BucketPolicy:
               - ''
               - - 'arn:aws:s3:::'
                 - !Ref S3Bucket
-                - /*
-      Bucket: !Ref S3Bucket
+                - '/*'
+
 Outputs:
   WebsiteURL:
     Value: !GetAtt 
       - S3Bucket
       - WebsiteURL
     Description: URL for website hosted on S3
+
   S3BucketSecureURL:
     Value: !Join 
       - ''
